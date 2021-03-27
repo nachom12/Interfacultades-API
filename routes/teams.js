@@ -52,7 +52,7 @@ function teams(app) {
       const updatedTeamId = await teamsService.updateTeam({ teamId, team });
       res.status(200).json({
         data: updatedTeamId,
-        message: 'team created'
+        message: 'team updated'
       });
     } catch (err) {
       next(err);
