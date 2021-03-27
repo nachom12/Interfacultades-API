@@ -4,6 +4,9 @@ const app = express();
 const { config } = require('./config/index');
 const { teams } = require('./routes/teams.js');
 
+//body parser
+app.use(express.json());
+
 teams(app);
 
 app.listen(config.port, function(){
