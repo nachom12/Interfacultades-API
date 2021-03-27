@@ -5,7 +5,7 @@ const app = express();
 const { config } = require('./config/index');
 const { teams } = require('./routes/teams.js');
 
-app.use(cors);
+app.use(cors());
 //body parser
 app.use(express.json());
 
