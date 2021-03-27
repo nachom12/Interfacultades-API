@@ -1,15 +1,15 @@
 const express = require('express');
 const { teamsMock } = require('../utils/mocks/teamsMock');
 
-function interfacultadesAPI(app) {
+function teams(app) {
   const router = express.Router();
-  app.use("/api/interfacultades", router);
+  app.use("/api/teams", router);
 
   router.get("/", async function (req, res, next) { // list all
     try {
-      const interfacultades = await Promise.resolve(teamsMock);
+      const teams = await Promise.resolve(teamsMock);
       res.status(200).json({
-        data: interfacultades,
+        data: teams,
         message: 'teams listed'
       });
     } catch (err) {
@@ -19,9 +19,9 @@ function interfacultadesAPI(app) {
 
   router.get("/:teamId", async function (req, res, next) { // obtain by id
     try {
-      const interfacultades = await Promise.resolve(teamsMock[0]);
+      const team = await Promise.resolve(teamsMock[0]);
       res.status(200).json({
-        data: interfacultades,
+        data: team,
         message: 'team retrieved'
       });
     } catch (err) {
@@ -67,4 +67,4 @@ function interfacultadesAPI(app) {
 
 }
 
-module.exports = { interfacultadesAPI };
+module.exports = { teams };

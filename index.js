@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 
 const { config } = require('./config/index');
-const { interfacultadesAPI } = require('./routes/interfacultades.js');
+const { teams } = require('./routes/teams.js');
 
-interfacultadesAPI(app);
+teams(app);
 
 app.listen(config.port, function(){
   console.log(`Listening on port : http://localhost:${config.port}`)
