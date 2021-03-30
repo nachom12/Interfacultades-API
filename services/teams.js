@@ -28,8 +28,8 @@ class TeamsService {
   }
 
   async deleteTeam({teamId}) {
-    const deletedMovieId = await this.mongoDB.delete(this.collection, teamId)
-    return deletedMovieId || {};
+    const deletedTeamId = await this.mongoDB.delete(this.collection, teamId)
+    return deletedTeamId || {};
   }
 
 }

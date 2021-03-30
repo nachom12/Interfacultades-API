@@ -7,8 +7,8 @@ class ChampionsService {
   }
 
 
-  async getChampions() {
-    const champions = await this.mongoDB.getTeamsJoin(this.collection);
+  async getChampionsTeams() {
+    const champions = await this.mongoDB.getChampionsTeams(this.collection);
     return champions || [];
   }
 

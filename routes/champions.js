@@ -9,7 +9,7 @@ function champions(app) {
 
   router.get("/", async function (req, res, next) {
     try {
-      const champions = await championsService.getChampions();
+      const champions = await championsService.getChampionsTeams();
       res.status(200).json({
         data: champions,
         message: 'champions listed'
