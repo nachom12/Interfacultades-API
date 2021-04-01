@@ -1,11 +1,13 @@
 const express = require('express');
 const MatchService = require('../services/matches');
+const TablesService = require('../services/tables');
 
 function matches(app) {
   const router = express.Router();
   app.use("/api/matches", router);
 
   const matchService = new MatchService();
+  const tablesService = new TablesService();
 
   router.get("/", async function (req, res, next) { // list all 
     try {
@@ -19,14 +21,44 @@ function matches(app) {
     }
   })
 
-  router.get("/:teamId", async function (req, res, next) { // obtain team matches.
-    const { teamId } = req.params;
+  router.get("/team/:teamId", async function (req, res, next) { // obtain team matches.
+    const { teamId: teamId } = req.params;
     try {
-      const match = await matchService.getTeamMatches({ teamId });
+      const data = await matchService.getTeamMatches({ teamId });
       res.status(200).json({
-        data: match,
-        message: 'matches retrieved'
+        data: data,
+        message: 'team matches retrieved '
       });
+
+    } catch (err) {
+      next(err);
+    }
+  })
+
+  router.get("/tournament/:tournamentId", async function (req, res, next) { // obtain team matches.
+    const { tournamentId: tournamentId } = req.params;
+    try {
+      const data = await matchService.getTournamentMatches({tournamentId});
+      res.status(200).json({
+        data: data,
+        message: 'tournament matches retrieved'
+      });
+
+    } catch (err) {
+      next(err);
+    }
+  })
+
+  router.get("/matchday/:tournamentId", async function (req, res, next) { // obtain team matches.
+    const { tournamentId: tournamentId} = req.params;
+    const { body: matchday} = req;
+    try {
+      const data = await matchService.getTournamentMatchesByMatchDay({tournamentId, matchday});
+      res.status(200).json({
+        data: data,
+        message: 'tournament matches retrieved by matchday'
+      });
+
     } catch (err) {
       next(err);
     }
@@ -45,14 +77,29 @@ function matches(app) {
     }
   })
 
-  router.put("/:matchId", async function (req, res, next) { // update
+  router.put("/:matchId", async function (req, res, next) { // update => only match score.
     const { matchId } = req.params;
-    const { body: match } = req;
+    const { body: matchScore } = req;
     try {
-      const updatedmatchId = await matchService.updateMatch({ matchId, match });
+      const updatedmatchId = await matchService.updateMatch({ matchId, matchScore });
       res.status(200).json({
         data: updatedmatchId,
         message: 'match updated'
+      });
+    } catch (err) {
+      next(err);
+    }
+  })
+
+  router.put("/:matchId/:tournamentId", async function (req, res, next) { // update => match score and positions also.
+    const { matchId: matchId, tournamentId: tournamentId } = req.params;
+    const { body: matchScore } = req;
+    try {
+      const updatedMatchId = await matchService.updateMatch({ matchId, matchScore });
+      const updatedTableId = await tablesService.updateTable({ tournamentId, matchScore });
+      res.status(200).json({
+        data: { updatedMatchId, updatedTableId },
+        message: 'match and table were updated'
       });
     } catch (err) {
       next(err);
