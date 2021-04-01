@@ -6,7 +6,7 @@ const { config } = require('./config/index');
 const { teams } = require('./routes/teams.js');
 const { champions } = require('./routes/champions.js');
 const { matches } = require('./routes/matches.js');
-const { tables } = require('./routes/tables.js');
+const { tournaments } = require('./routes/tournaments.js');
 
 app.use(cors());
 //body parser
@@ -15,7 +15,7 @@ app.use(express.json());
 teams(app);
 champions(app);
 matches(app);
-tables(app);
+tournaments(app);
 
 app.listen(config.port, function () {
   console.log(`Listening on port : http://localhost:${config.port}`)

@@ -1,13 +1,13 @@
 const express = require('express');
 const MatchService = require('../services/matches');
-const TablesService = require('../services/tables');
+const TournamentsService = require('../services/tournaments');
 
 function matches(app) {
   const router = express.Router();
   app.use("/api/matches", router);
 
   const matchService = new MatchService();
-  const tablesService = new TablesService();
+  const tournamentsService = new TournamentsService();
 
   router.get("/", async function (req, res, next) { // list all 
     try {
@@ -35,7 +35,7 @@ function matches(app) {
     }
   })
 
-  router.get("/tournament/:tournamentId", async function (req, res, next) { // obtain team matches.
+  router.get("/tournament/:tournamentId", async function (req, res, next) { // obtain tournament matches.
     const { tournamentId: tournamentId } = req.params;
     try {
       const data = await matchService.getTournamentMatches({tournamentId});
@@ -49,7 +49,7 @@ function matches(app) {
     }
   })
 
-  router.get("/matchday/:tournamentId", async function (req, res, next) { // obtain team matches.
+  router.get("/matchday/:tournamentId", async function (req, res, next) { // obtain tournament matches by matchday.
     const { tournamentId: tournamentId} = req.params;
     const { body: matchday} = req;
     try {
@@ -96,10 +96,10 @@ function matches(app) {
     const { body: matchScore } = req;
     try {
       const updatedMatchId = await matchService.updateMatch({ matchId, matchScore });
-      const updatedTableId = await tablesService.updateTable({ tournamentId, matchScore });
+      const updatedTournamentId = await tournamentsService.updateTournament({ tournamentId, matchScore });
       res.status(200).json({
-        data: { updatedMatchId, updatedTableId },
-        message: 'match and table were updated'
+        data: { updatedMatchId, updatedTournamentId },
+        message: 'match and tournament were updated'
       });
     } catch (err) {
       next(err);
