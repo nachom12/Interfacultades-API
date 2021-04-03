@@ -49,11 +49,13 @@ function matches(app) {
     }
   })
 
-  router.get("/matchday/:tournamentId", async function (req, res, next) { // obtain tournament matches by matchday.
+  router.get("/matchday/:tournamentId/", async function (req, res, next) { // obtain tournament matches by matchday.
     const { tournamentId: tournamentId} = req.params;
-    const { body: matchday} = req;
+    const matchDescription = req.query.matchDescription;
+    console.log(matchDescription);
+    //const { body: matchday} = req;
     try {
-      const data = await matchService.getTournamentMatchesByMatchDay({tournamentId, matchday});
+      const data = await matchService.getTournamentMatchesByMatchDay({tournamentId, matchDescription});
       res.status(200).json({
         data: data,
         message: 'tournament matches retrieved by matchday'

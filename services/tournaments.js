@@ -13,7 +13,7 @@ class TournamentsService {
   }
 
   async getTournament({ tournamentId }) {
-    const tournament = await this.mongoDB.get(this.collection, tournamentId);
+    const tournament = await this.mongoDB.getTournament(this.collection, tournamentId);
     return tournament || {};
   }
 
