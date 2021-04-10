@@ -35,7 +35,13 @@ function tournaments(app) {
   router.post("/", async function (req, res, next) { // create
     const { body: tournament } = req;
     try {
-      const createdTournamentId = await tournamentsService.createTournament({ tournament });
+      let createdTournamentId;
+      if (tournament.type === 'League'){
+        createdTournamentId = await tournamentsService.createTournamentLeague({ tournament });
+      }
+      else {
+        createdTournamentId = await tournamentsService.createTournament({ tournament });
+      }
       res.status(201).json({
         data: createdTournamentId,
         message: 'tournament created'
