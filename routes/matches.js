@@ -92,15 +92,17 @@ function matches(app) {
     }
   })
 
-  router.put("/:matchId/:tournamentId", async function (req, res, next) { // update => match score and positions also.
+  router.put("/:matchId/:tournamentId", async function (req, res, next) { // update => match score and positions if it's appropriate.
     const { matchId: matchId, tournamentId: tournamentId } = req.params;
     const { body: matchScore } = req;
     try {
       const updatedMatchId = await matchService.updateMatch({ matchId, matchScore });
-      const updatedTournamentId = await tournamentsService.updateTournament({ tournamentId, matchScore });
+      if (matchId.match_type === 'league'){
+        const updatedTournamentId = await tournamentsService.updateTournament({ tournamentId, matchScore });
+      }
       res.status(200).json({
-        data: { updatedMatchId, updatedTournamentId },
-        message: 'match and tournament were updated'
+        data: { updatedMatchId },
+        message: 'match updated'
       });
     } catch (err) {
       next(err);
