@@ -23,7 +23,6 @@ class MatchesService {
   }
 
   async getTournamentMatchesByMatchDay({tournamentId, matchDescription}){
-    console.log(matchDescription);
     const matches = await this.mongoDB.getTournamentMatchesByMatchDay(this.collection, tournamentId ,matchDescription);
     return matches || [];
   }
