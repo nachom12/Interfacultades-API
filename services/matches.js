@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const MongoLib = require('../lib/mongo');
 
 class MatchesService {
@@ -27,8 +28,8 @@ class MatchesService {
     return matches || [];
   }
 
-  async createMatch({ match }) {
-    const createdMatchId = await this.mongoDB.create(this.collection, match);
+  async createMatch({ tournamentId, match }) {
+    const createdMatchId = await this.mongoDB.createMatch(this.collection, tournamentId ,match);
     return createdMatchId || {};
   }
 

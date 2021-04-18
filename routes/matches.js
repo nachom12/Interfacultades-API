@@ -38,7 +38,7 @@ function matches(app) {
   router.get("/tournament/:tournamentId", async function (req, res, next) { // obtain tournament matches.
     const { tournamentId: tournamentId } = req.params;
     try {
-      const data = await matchService.getTournamentMatches({tournamentId});
+      const data = await matchService.getTournamentMatches({ tournamentId });
       res.status(200).json({
         data: data,
         message: 'tournament matches retrieved'
@@ -50,10 +50,10 @@ function matches(app) {
   })
 
   router.get("/matchday/:tournamentId/", async function (req, res, next) { // obtain tournament matches by matchday.
-    const { tournamentId: tournamentId} = req.params;
+    const { tournamentId: tournamentId } = req.params;
     const matchDescription = req.query.matchDescription;
     try {
-      const data = await matchService.getTournamentMatchesByMatchDay({tournamentId, matchDescription});
+      const data = await matchService.getTournamentMatchesByMatchDay({ tournamentId, matchDescription });
       res.status(200).json({
         data: data,
         message: 'tournament matches retrieved by matchday'
@@ -64,10 +64,11 @@ function matches(app) {
     }
   })
 
-  router.post("/", async function (req, res, next) { // create
+  router.post("/:tournamentId", async function (req, res, next) { // create
+    const { tournamentId } = req.params;
     const { body: match } = req;
     try {
-      const createdmatchId = await matchService.createMatch({ match });
+      const createdmatchId = await matchService.createMatch({ tournamentId, match});
       res.status(201).json({
         data: createdmatchId,
         message: 'match created'
