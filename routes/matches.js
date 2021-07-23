@@ -97,7 +97,7 @@ function matches(app) {
     const { body: matchScore } = req;
     try {
       const updatedMatchId = await matchService.updateMatch({ matchId, matchScore });
-      if (matchId.match_type === 'league'){
+      if (matchScore.match_type === 'league'){
         const updatedTournamentId = await tournamentsService.updateTournament({ tournamentId, matchScore });
       }
       res.status(200).json({
