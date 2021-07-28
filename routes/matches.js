@@ -35,6 +35,19 @@ function matches(app) {
     }
   })
 
+  router.get("/team/:teamId/:tournamentId", async function (req, res, next) { // obtain team matches in a tournament.
+    const { teamId: teamId, tournamentId: tournamentId } = req.params;
+    try {
+      const data = await matchService.getTeamMatchesInTournament({ teamId, tournamentId });
+      res.status(200).json({
+        data: data,
+        message: 'team matches retrieved '
+      });
+    } catch (err) {
+      next(err);
+    }
+  })
+
   router.get("/tournament/:tournamentId", async function (req, res, next) { // obtain tournament matches.
     const { tournamentId: tournamentId } = req.params;
     try {

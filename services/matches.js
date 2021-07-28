@@ -18,6 +18,11 @@ class MatchesService {
     return matches || [];
   }
 
+  async getTeamMatchesInTournament({teamId , tournamentId}){
+    const matches = await this.mongoDB.getTeamMatchesInTournament(this.collection, teamId, tournamentId);
+    return matches || [];
+  }
+
   async getTournamentMatches({ tournamentId }) {
     const matches = await this.mongoDB.getTournamentMatches(this.collection, tournamentId);
     return matches || [];
