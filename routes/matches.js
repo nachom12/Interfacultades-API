@@ -81,7 +81,7 @@ function matches(app) {
     const { tournamentId } = req.params;
     const { body: match } = req;
     try {
-      const createdmatchId = await matchService.createMatch({ tournamentId, match});
+      const createdmatchId = await matchService.createMatch({ tournamentId, match });
       res.status(201).json({
         data: createdmatchId,
         message: 'match created'
@@ -110,7 +110,7 @@ function matches(app) {
     const { body: matchScore } = req;
     try {
       const updatedMatchId = await matchService.updateMatch({ matchId, matchScore });
-      if (matchScore.match_type === 'league'){
+      if (matchScore.match_type === 'league') {
         const updatedTournamentId = await tournamentsService.updateTournament({ tournamentId, matchScore });
       }
       res.status(200).json({
@@ -134,6 +134,36 @@ function matches(app) {
       next(err);
     }
   })
+
+  router.delete("/eraseResult/:matchId", async function (req, res, next) {
+    const { matchId } = req.params;
+    try {
+      let match = await matchService.getMatch({ matchId });
+      let editedMatch = await matchService.eraseResult({ matchId, match });
+      res.status(200).json({
+        data: editedMatch,
+        message: 'Result deleted'
+      })
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.delete("/eraseResult/:matchId/:tournamentId", async function (req, res, next) {
+    const { matchId, tournamentId } = req.params;
+    try {
+      console.log (`Erasex ${matchId} tournament ${tournamentId}`)
+      let match = await matchService.getMatch({ matchId });
+      await tournamentsService.fixPositionsByErasedResult({ match, tournamentId });
+      let editedMatch = await matchService.eraseResult({ matchId, match });
+      res.status(200).json({
+        data: editedMatch,
+        message: 'Result daleted and tournament updated'
+      })
+    } catch (err) {
+      next(err);
+    }
+  });
 
 }
 

@@ -7,6 +7,10 @@ class MatchesService {
     this.mongoDB = new MongoLib();
   }
 
+  async getMatch({ matchId }) {
+    const match = await this.mongoDB.get(this.collection, matchId);
+    return match || [];
+  }
 
   async getMatches() {
     const matches = await this.mongoDB.getAll(this.collection);
@@ -18,7 +22,7 @@ class MatchesService {
     return matches || [];
   }
 
-  async getTeamMatchesInTournament({teamId , tournamentId}){
+  async getTeamMatchesInTournament({ teamId, tournamentId }) {
     const matches = await this.mongoDB.getTeamMatchesInTournament(this.collection, teamId, tournamentId);
     return matches || [];
   }
@@ -28,13 +32,13 @@ class MatchesService {
     return matches || [];
   }
 
-  async getTournamentMatchesByMatchDay({tournamentId, matchDescription}){
-    const matches = await this.mongoDB.getTournamentMatchesByMatchDay(this.collection, tournamentId ,matchDescription);
+  async getTournamentMatchesByMatchDay({ tournamentId, matchDescription }) {
+    const matches = await this.mongoDB.getTournamentMatchesByMatchDay(this.collection, tournamentId, matchDescription);
     return matches || [];
   }
 
   async createMatch({ tournamentId, match }) {
-    const createdMatchId = await this.mongoDB.createMatch(this.collection, tournamentId ,match);
+    const createdMatchId = await this.mongoDB.createMatch(this.collection, tournamentId, match);
     return createdMatchId || {};
   }
 
@@ -46,6 +50,14 @@ class MatchesService {
   async deleteMatch({ matchId }) {
     const deletedMatchId = await this.mongoDB.delete(this.collection, matchId)
     return deletedMatchId || {};
+  }
+
+  async eraseResult({ matchId, match }) {
+    match.team_1_score = null;
+    match.team_2_score = null;
+    match.state = 'not played';
+    await this.mongoDB.eraseResult(this.collection, matchId, match);
+    return match;
   }
 
 }

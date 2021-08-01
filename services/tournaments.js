@@ -49,6 +49,11 @@ class TournamentsService {
     return deletedTournamentId || {};
   }
 
+  async fixPositionsByErasedResult({ match, tournamentId }) {
+    await this.mongoDB.fixPositionsByErasedResult(this.collection, match, tournamentId);
+    return tournamentId;
+  }
+
 }
 
 module.exports = TournamentsService;
