@@ -21,5 +21,6 @@ stats(app);
 
 
 app.listen(config.port, function () {
+  // eslint-disable-next-line no-console
   console.log(`Listening on port : http://localhost:${config.port}`)
 });
