@@ -33,7 +33,7 @@ class TournamentsService {
     let tournamentLeague = {};
     tournamentLeague.name = tournament.name;
     tournamentLeague.type = tournament.type;
-    tournamentLeague.table = tournament.teams.map((team) => ({ team_id: new ObjectId(team), points: 0, gf: 0, gc: 0, gd: 0 }))
+    tournamentLeague.table = tournament.teams.map((team) => ({ team_id: new ObjectId(team), points: 0, gf: 0, gc: 0, gd: 0, pm: 0 }))
 
     const createdTournamentId = await this.mongoDB.create(this.collection, tournamentLeague);
     return createdTournamentId || {};
