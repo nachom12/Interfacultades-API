@@ -17,6 +17,6 @@
     "DB_USER": "@interfacultades-api-db-user",
     "DB_PASSWORD": "@interfacultades-api-db-password",
     "DB_HOST": "@interfacultades-api-db-host",
-    "DB_NAME": "interfacultades_db_staging"
+    "DB_NAME": "interfacultades_db"
   }
 }
