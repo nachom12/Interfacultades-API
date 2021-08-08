@@ -40,17 +40,17 @@ class StatsService {
       let points = [];
       filteredMatches.map((match) => {
         if (match.team_1_data[0].name == team.name) {  //  el team es el team1
-          if (match.team_1_score > match.team_2_score && match.state == 'played') {
+          if (Number(match.team_1_score) > Number(match.team_2_score) && match.state == 'played') {
             accumulatedPoints += 3;
-          } else if (match.team_1_score == match.team_2_score && match.state == 'played') {
+          } else if (Number(match.team_1_score) == Number(match.team_2_score) && match.state == 'played') {
             accumulatedPoints += 1;
           }
           points.push({ description: match.description, accumulatedPoints });
         }
         else if (match.team_2_data[0].name == team.name) { // el team es el team2
-          if (match.team_2_score > match.team_1_score && match.state == 'played') {
+          if (Number(match.team_2_score) > Number(match.team_1_score) && match.state == 'played') {
             accumulatedPoints += 3;
-          } else if (match.team_2_score == match.team_1_score && match.state == 'played') {
+          } else if (Number(match.team_2_score) == Number(match.team_1_score) && match.state == 'played') {
             accumulatedPoints += 1;
           }
           points.push({ description: match.description, accumulatedPoints });
@@ -77,16 +77,16 @@ class StatsService {
       if (match.state === 'played') {
         playedMatches += 1;
         if (match.team_1_id == teamId) { // team = team_1
-          gf += match.team_1_score;
-          gc += match.team_2_score;
-          if (match.team_1_score > match.team_2_score) {
+          gf += Number(Number(match.team_1_score));
+          gc += Number(Number(match.team_2_score));
+          if (Number(match.team_1_score) > Number(match.team_2_score)) {
             streak.push('w');
-          } else if (match.team_1_score == match.team_2_score) {
+          } else if (Number(match.team_1_score) == Number(match.team_2_score)) {
             streak.push('d');
           } else {
             streak.push('l');
           }
-          if (match.team_2_score == 0) {
+          if (Number(match.team_2_score) == 0) {
             totalCleanSheets++;
             currentCleanSheets++;
           } else {
@@ -94,16 +94,16 @@ class StatsService {
           }
         }
         else { // team == team_2
-          gf += match.team_2_score;
-          gc += match.team_1_score;
-          if (match.team_2_score > match.team_1_score) {
+          gf += Number(match.team_2_score);
+          gc += Number(match.team_1_score);
+          if (Number(match.team_2_score) > Number(match.team_1_score)) {
             streak.push('w');
-          } else if (match.team_1_score == match.team_2_score) {
+          } else if (Number(match.team_1_score) == Number(match.team_2_score)) {
             streak.push('d');
           } else {
             streak.push('l');
           }
-          if (match.team_1_score == 0) {
+          if (Number(match.team_1_score) == 0) {
             currentCleanSheets++;
             totalCleanSheets++;
           } else {
