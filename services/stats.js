@@ -9,28 +9,26 @@ const matchesService = new MatchesService();
 
 class StatsService {
   constructor() {
-    this.tournaMentCollection = 'tournaments'
+    this.tournamentCollection = 'tournaments'
     this.mongoDB = new MongoLib();
   };
 
-  generateAllMatchDays(currentMatchDay) {
+  generateAllMatchDays(lastMatchDayPlayed) {
     let res = [];
-    for (let i = 1; i <= currentMatchDay; i++) {
+    for (let i = 1; i <= lastMatchDayPlayed; i++) {
       res.push("Fecha " + i);
     }
     return res;
   }
 
-  async getTeamPointsInEachMatchday(tournamentId) {
-    // const tournament = await this.mongoDB.getLastplayedMatchDayInTournament(this.tournaMentCollection, tournamentId);
-    // let currentMatchday = tournament.lastMatchDayplayed;
+  async getTeamPointsInEachMatchday({ tournamentId }) {
+    const lastMatchDayPlayedResult = await this.mongoDB.getLastMatchDayPLayedInTournament(this.tournamentCollection, tournamentId);
+    const { lastMatchDayPlayed } = lastMatchDayPlayedResult[0];
 
-    let currentMatchDay = 3;
+    const matchDays = this.generateAllMatchDays(lastMatchDayPlayed);
 
-    const matchDays = this.generateAllMatchDays(currentMatchDay);
-
-    let tournamentTeams = await tournamentsService.getTeamsInTournament(tournamentId);
-    let tournamentMatches = await matchesService.getTournamentMatches(tournamentId);
+    let tournamentTeams = await tournamentsService.getTeamsInTournament({ tournamentId });
+    let tournamentMatches = await matchesService.getTournamentMatches({ tournamentId });
     let filteredMatches = tournamentMatches.filter((match) => matchDays.indexOf(match.description) >= 0);
     // console.log(filteredMatches);
 
@@ -62,7 +60,9 @@ class StatsService {
   }
 
   async getTeamStatsInTournament(teamId, tournamentId) {
-    const teamMatches = await matchesService.getTeamMatchesInTournament({ teamId, tournamentId }); //sort
+    const teamMatches = await matchesService.getTeamMatchesInTournament({ teamId, tournamentId }); 
+    let teamMatchesSorted = teamMatches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
+    //sort
 
     let streak = [];
     let playedMatches = 0;
@@ -73,7 +73,7 @@ class StatsService {
     let totalCleanSheets = 0;
     let receivedGoalsAverage = 0;
 
-    teamMatches.map((match) => {
+    teamMatchesSorted.map((match) => {
       if (match.state === 'played') {
         playedMatches += 1;
         if (match.team_1_id == teamId) { // team = team_1

@@ -152,7 +152,6 @@ function matches(app) {
   router.delete("/eraseResult/:matchId/:tournamentId", async function (req, res, next) {
     const { matchId, tournamentId } = req.params;
     try {
-      console.log (`Erasex ${matchId} tournament ${tournamentId}`)
       let match = await matchService.getMatch({ matchId });
       await tournamentsService.fixPositionsByErasedResult({ match, tournamentId });
       let editedMatch = await matchService.eraseResult({ matchId, match });
