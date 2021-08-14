@@ -19,7 +19,7 @@ class TournamentsService {
   }
 
   async getTeamsInTournament({ tournamentId }) {
-    const tournament = await this.getTournament(tournamentId);
+    const tournament = await this.getTournament({tournamentId});
     let teamDataTournament = tournament[0].teamData;
     return teamDataTournament.map((team) => ({ name: team.name, id: team._id }));
   }
