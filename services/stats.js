@@ -1,5 +1,5 @@
 // const matchService = require('../services/matches');
-const statsMock = require('../utils/mocks/statsMock');
+// const statsMock = require('../utils/mocks/statsMock');
 const TournamentsService = require('../services/tournaments');
 const MatchesService = require('../services/matches');
 const MongoLib = require('../lib/mongo');
@@ -29,8 +29,9 @@ class StatsService {
 
     let tournamentTeams = await tournamentsService.getTeamsInTournament({ tournamentId });
     let tournamentMatches = await matchesService.getTournamentMatches({ tournamentId });
-    let filteredMatches = tournamentMatches.filter((match) => matchDays.indexOf(match.description) >= 0);
+    let filteredMatchesNotSorted = tournamentMatches.filter((match) => matchDays.indexOf(match.description) >= 0);
     // console.log(filteredMatches);
+    let filteredMatches = filteredMatchesNotSorted.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
 
     tournamentTeams.map((team) => {
       // console.log(team);
