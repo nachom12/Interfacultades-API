@@ -29,12 +29,9 @@ class StatsService {
 
     let tournamentTeams = await tournamentsService.getTeamsInTournament({ tournamentId });
     let tournamentMatches = await matchesService.getTournamentMatches({ tournamentId });
-    let filteredMatchesNotSorted = tournamentMatches.filter((match) => matchDays.indexOf(match.description) >= 0);
-    // console.log(filteredMatches);
-    let filteredMatches = filteredMatchesNotSorted.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
+    let filteredMatches = tournamentMatches.filter((match) => matchDays.indexOf(match.description) >= 0);
 
     tournamentTeams.map((team) => {
-      // console.log(team);
       let accumulatedPoints = 0;
       let points = [];
       filteredMatches.map((match) => {
@@ -62,8 +59,6 @@ class StatsService {
 
   async getTeamStatsInTournament(teamId, tournamentId) {
     const teamMatches = await matchesService.getTeamMatchesInTournament({ teamId, tournamentId }); 
-    let teamMatchesSorted = teamMatches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
-    //sort
 
     let streak = [];
     let playedMatches = 0;
@@ -74,7 +69,7 @@ class StatsService {
     let totalCleanSheets = 0;
     let receivedGoalsAverage = 0;
 
-    teamMatchesSorted.map((match) => {
+    teamMatches.map((match) => {
       if (match.state === 'played') {
         playedMatches += 1;
         if (match.team_1_id == teamId) { // team = team_1

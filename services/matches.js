@@ -1,9 +1,11 @@
+// eslint-disable-next-line no-unused-vars
 const { ObjectId } = require('mongodb');
 const MongoLib = require('../lib/mongo');
 
 class MatchesService {
   constructor() {
     this.collection = 'matches';
+    this.tournamentCollection = 'tournaments';
     this.mongoDB = new MongoLib();
   }
 
@@ -24,17 +26,38 @@ class MatchesService {
 
   async getTeamMatchesInTournament({ teamId, tournamentId }) {
     const matches = await this.mongoDB.getTeamMatchesInTournament(this.collection, teamId, tournamentId);
-    return matches || [];
+    const isTournamentLeague = await this.mongoDB.isTournamentLeague(this.tournamentCollection, tournamentId);
+    const { type } = isTournamentLeague[0];
+    if (type === 'League') {
+      let matchesSorted = matches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
+      return matchesSorted;
+    } else {
+      return matches || [];
+    }
   }
 
   async getTournamentMatches({ tournamentId }) {
     const matches = await this.mongoDB.getTournamentMatches(this.collection, tournamentId);
-    return matches || [];
+    const isTournamentLeague = await this.mongoDB.isTournamentLeague(this.tournamentCollection, tournamentId);
+    const { type } = isTournamentLeague[0];
+    if (type === 'League') {
+      let matchesSorted = matches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
+      return matchesSorted;
+    } else {
+      return matches || [];
+    }
   }
 
   async getTournamentMatchesByMatchDay({ tournamentId, matchDescription }) {
     const matches = await this.mongoDB.getTournamentMatchesByMatchDay(this.collection, tournamentId, matchDescription);
-    return matches || [];
+    const isTournamentLeague = await this.mongoDB.isTournamentLeague(this.tournamentCollection, tournamentId);
+    const { type } = isTournamentLeague[0];
+    if (type === 'League') {
+      let matchesSorted = matches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
+      return matchesSorted;
+    } else {
+      return matches || [];
+    }
   }
 
   async createMatch({ tournamentId, match }) {
