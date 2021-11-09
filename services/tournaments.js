@@ -54,6 +54,11 @@ class TournamentsService {
     return tournamentId;
   }
 
+  async getTournamentInfo({ tournamentId }){
+    const info = await this.mongoDB.getTournamentInfo(this.collection, tournamentId);
+    return info; 
+  }
+
 }
 
 module.exports = TournamentsService;
