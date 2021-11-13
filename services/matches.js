@@ -66,7 +66,8 @@ class MatchesService {
   }
 
   async updateMatch({ matchId, matchScore } = {}) {
-    const updatedMatchId = await this.mongoDB.updateMatch(this.collection, matchId, matchScore);
+    let { team_1_id, team_2_id, ...matchScoreData } = matchScore
+    const updatedMatchId = await this.mongoDB.updateMatch(this.collection, matchId, matchScoreData);
     return updatedMatchId || {};
   }
 
