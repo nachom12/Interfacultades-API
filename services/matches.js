@@ -50,8 +50,8 @@ class MatchesService {
 
   async getTournamentMatchesByMatchDay({ tournamentId, matchDescription }) {
     const matches = await this.mongoDB.getTournamentMatchesByMatchDay(this.collection, tournamentId, matchDescription);
-    const { tournamentInfo } = await this.mongoDB.getTournamentInfo({ tournamentId });
-    const { type } = tournamentInfo[0];
+    const  tournamentInfo  = await this.mongoDB.getTournamentInfo( this.collection,  tournamentId );
+    const { type } = tournamentInfo[0] || [];
     if (type === 'League') {
       let matchesSorted = matches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10))
       return matchesSorted;
