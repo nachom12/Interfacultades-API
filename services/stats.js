@@ -22,9 +22,8 @@ class StatsService {
   }
 
   async getTeamPointsInEachMatchday({ tournamentId }) {
-    const lastMatchDayPlayedResult = await this.mongoDB.getLastMatchDayPLayedInTournament(this.tournamentCollection, tournamentId);
-    const { lastMatchDayPlayed } = lastMatchDayPlayedResult[0];
-
+    const tournamentInfo = await this.mongoDB.getTournamentInfo(this.tournamentCollection, tournamentId);
+    const { lastMatchDayPlayed } = tournamentInfo[0];
     const matchDays = this.generateAllMatchDays(lastMatchDayPlayed);
 
     let tournamentTeams = await tournamentsService.getTeamsInTournament({ tournamentId });

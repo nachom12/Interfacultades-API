@@ -38,8 +38,8 @@ class MatchesService {
 
   async getTournamentMatches({ tournamentId }) {
     const matches = await this.mongoDB.getTournamentMatches(this.collection, tournamentId);
-    const isTournamentLeague = await this.mongoDB.isTournamentLeague(this.tournamentCollection, tournamentId);
-    const { type } = isTournamentLeague[0];
+    const tournamentInfo = await this.mongoDB.getTournamentInfo(this.tournamentCollection, tournamentId);
+    const { type } = tournamentInfo[0] || [];
     if (type === 'League') {
       let matchesSorted = matches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
       return matchesSorted;
@@ -50,10 +50,10 @@ class MatchesService {
 
   async getTournamentMatchesByMatchDay({ tournamentId, matchDescription }) {
     const matches = await this.mongoDB.getTournamentMatchesByMatchDay(this.collection, tournamentId, matchDescription);
-    const isTournamentLeague = await this.mongoDB.isTournamentLeague(this.tournamentCollection, tournamentId);
-    const { type } = isTournamentLeague[0];
+    const  tournamentInfo  = await this.mongoDB.getTournamentInfo( this.collection,  tournamentId );
+    const { type } = tournamentInfo[0] || [];
     if (type === 'League') {
-      let matchesSorted = matches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10)) 
+      let matchesSorted = matches.sort((a, b) => parseInt(a.description.replace(/^\D+/g, ''), 10) - parseInt(b.description.replace(/^\D+/g, ''), 10))
       return matchesSorted;
     } else {
       return matches || [];
@@ -66,7 +66,8 @@ class MatchesService {
   }
 
   async updateMatch({ matchId, matchScore } = {}) {
-    const updatedMatchId = await this.mongoDB.updateMatch(this.collection, matchId, matchScore);
+    let { team_1_id, team_2_id, ...matchScoreData } = matchScore
+    const updatedMatchId = await this.mongoDB.updateMatch(this.collection, matchId, matchScoreData);
     return updatedMatchId || {};
   }
 
