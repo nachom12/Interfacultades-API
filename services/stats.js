@@ -61,6 +61,9 @@ class StatsService {
 
     let streak = [];
     let playedMatches = 0;
+    let wonMatches = 0;
+    let lostMatches = 0;
+    let tiedMatches = 0;
     let gf = 0;
     let gc = 0;
     let goalsAverage = 0;
@@ -76,10 +79,13 @@ class StatsService {
           gc += Number(Number(match.team_2_score));
           if (Number(match.team_1_score) > Number(match.team_2_score)) {
             streak.push('w');
+            wonMatches += 1;
           } else if (Number(match.team_1_score) == Number(match.team_2_score)) {
             streak.push('d');
+            tiedMatches += 1;
           } else {
             streak.push('l');
+            lostMatches += 1;
           }
           if (Number(match.team_2_score) == 0) {
             totalCleanSheets++;
@@ -93,10 +99,13 @@ class StatsService {
           gc += Number(match.team_1_score);
           if (Number(match.team_2_score) > Number(match.team_1_score)) {
             streak.push('w');
+            wonMatches += 1;
           } else if (Number(match.team_1_score) == Number(match.team_2_score)) {
             streak.push('d');
+            tiedMatches += 1;
           } else {
             streak.push('l');
+            lostMatches += 1;
           }
           if (Number(match.team_1_score) == 0) {
             currentCleanSheets++;
@@ -110,14 +119,17 @@ class StatsService {
       receivedGoalsAverage = Number((gc / playedMatches).toFixed(2));
     });
     let stats = [
-      { streak: streak },
-      { playedMatches: playedMatches },
-      { gf: gf },
-      { gc: gc },
-      { goalsAverage: goalsAverage },
-      { totalCleanSheets: totalCleanSheets },
-      { currentCleanSheets: currentCleanSheets },
-      { receivedGoalsAverage: receivedGoalsAverage }
+      { streak },
+      { playedMatches },
+      {wonMatches },
+      {tiedMatches },
+      {lostMatches},
+      { gf },
+      { gc },
+      { goalsAverage },
+      { totalCleanSheets },
+      { currentCleanSheets },
+      { receivedGoalsAverage }
     ]
     return stats;
   }
