@@ -1,5 +1,3 @@
-// const matchService = require('../services/matches');
-// const statsMock = require('../utils/mocks/statsMock');
 const TournamentsService = require('../services/tournaments');
 const MatchesService = require('../services/matches');
 const MongoLib = require('../lib/mongo');
@@ -65,6 +63,7 @@ class StatsService {
     let lostMatches = 0;
     let tiedMatches = 0;
     let points = 0;
+    let gd = 0;
     let gf = 0;
     let gc = 0;
     let goalsAverage = 0;
@@ -121,17 +120,18 @@ class StatsService {
       }
       goalsAverage = Number((gf / playedMatches).toFixed(2));
       receivedGoalsAverage = Number((gc / playedMatches).toFixed(2));
+      gd = gf - gc;
       points = (wonMatches * 3) + tiedMatches
     });
     let stats =
     {
-      teamId,
       streak,
       playedMatches,
       wonMatches,
       tiedMatches,
       lostMatches,
       points,
+      gd,
       gf,
       gc,
       goalsAverage,
@@ -142,14 +142,18 @@ class StatsService {
     return stats;
   }
 
-  async getTournamentPositionsWithStats(tournamentTeams, tournamentId) { // TODO-test: proar no pasar como objetos en el routes y aca recibirlos normales.
-    let resProm = Promise.all(
+  async getTournamentPositionsWithStats(tournamentTeams, tournamentId) {
+    let resProm = await Promise.all(
       await tournamentTeams.map(async (team) => {
-        let stats = await this.getTeamStatsInTournament(team.id, tournamentId); // probe desestructurar el objeto aca
+        let stats = await this.getTeamStatsInTournament(team.id, tournamentId);
         team.stats = stats;
         return team;
       })
     );
+    console.log("resProm.data");
+    console.log(resProm);
+    resProm.sort((teamA, teamB) => teamB.stats.points - teamA.stats.points || teamB.stats.gd - teamB.stats.gd || teamB.stats.gf - teamB.stats.gf || teamB.stats.gc - teamB.stats.gc);
+    // Sort by points and then by gf
     return resProm;
   }
 
