@@ -150,10 +150,7 @@ class StatsService {
         return team;
       })
     );
-    console.log("resProm.data");
-    console.log(resProm);
     resProm.sort((teamA, teamB) => teamB.stats.points - teamA.stats.points || teamB.stats.gd - teamB.stats.gd || teamB.stats.gf - teamB.stats.gf || teamB.stats.gc - teamB.stats.gc);
-    // Sort by points and then by gf
     return resProm;
   }
 
