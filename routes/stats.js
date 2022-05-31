@@ -29,7 +29,7 @@ function stats(app) {
         message: 'Team stats retrieved'
       });
     }
-    catch(err){
+    catch (err) {
       next(err);
     }
   })
