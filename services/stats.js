@@ -57,13 +57,14 @@ class StatsService {
   }
 
   async getTeamStatsInTournament(teamId, tournamentId) {
-    const teamMatches = await matchesService.getTeamMatchesInTournament({ teamId, tournamentId }); 
+    const teamMatches = await matchesService.getTeamMatchesInTournament({ teamId, tournamentId });
 
     let streak = [];
     let playedMatches = 0;
     let wonMatches = 0;
     let lostMatches = 0;
     let tiedMatches = 0;
+    let points = 0;
     let gf = 0;
     let gc = 0;
     let goalsAverage = 0;
@@ -74,7 +75,10 @@ class StatsService {
     teamMatches.map((match) => {
       if (match.state === 'played') {
         playedMatches += 1;
-        if (match.team_1_id == teamId) { // team = team_1
+        let team1id = match.team_1_id.toString();
+        let stringTeamId = teamId.toString();
+
+        if (team1id == stringTeamId) { // team = team_1
           gf += Number(Number(match.team_1_score));
           gc += Number(Number(match.team_2_score));
           if (Number(match.team_1_score) > Number(match.team_2_score)) {
@@ -117,21 +121,36 @@ class StatsService {
       }
       goalsAverage = Number((gf / playedMatches).toFixed(2));
       receivedGoalsAverage = Number((gc / playedMatches).toFixed(2));
+      points = (wonMatches * 3) + tiedMatches
     });
-    let stats = [
-      { streak },
-      { playedMatches },
-      {wonMatches },
-      {tiedMatches },
-      {lostMatches},
-      { gf },
-      { gc },
-      { goalsAverage },
-      { totalCleanSheets },
-      { currentCleanSheets },
-      { receivedGoalsAverage }
-    ]
+    let stats =
+    {
+      teamId,
+      streak,
+      playedMatches,
+      wonMatches,
+      tiedMatches,
+      lostMatches,
+      points,
+      gf,
+      gc,
+      goalsAverage,
+      totalCleanSheets,
+      currentCleanSheets,
+      receivedGoalsAverage
+    }
     return stats;
+  }
+
+  async getTournamentPositionsWithStats(tournamentTeams, tournamentId) { // TODO-test: proar no pasar como objetos en el routes y aca recibirlos normales.
+    let resProm = Promise.all(
+      await tournamentTeams.map(async (team) => {
+        let stats = await this.getTeamStatsInTournament(team.id, tournamentId); // probe desestructurar el objeto aca
+        team.stats = stats;
+        return team;
+      })
+    );
+    return resProm;
   }
 
 }
