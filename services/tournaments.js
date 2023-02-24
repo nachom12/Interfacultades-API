@@ -19,9 +19,9 @@ class TournamentsService {
   }
 
   async getTeamsInTournament({ tournamentId }) {
-    const tournament = await this.getTournament({tournamentId});
+    const tournament = await this.getTournament({ tournamentId });
     let teamDataTournament = tournament[0].teamData;
-    return teamDataTournament.map((team) => ({ name: team.name, id: team._id }));
+    return teamDataTournament.map((team) => ({ name: team.name, id: team._id, logo: team.logo, alias: team.alias }));
   }
 
   async createTournament({ tournament }) {
@@ -54,9 +54,9 @@ class TournamentsService {
     return tournamentId;
   }
 
-  async getTournamentInfo({ tournamentId }){
+  async getTournamentInfo({ tournamentId }) {
     const info = await this.mongoDB.getTournamentInfo(this.collection, tournamentId);
-    return info; 
+    return info;
   }
 
 }

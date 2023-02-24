@@ -1,5 +1,3 @@
-// const matchService = require('../services/matches');
-// const statsMock = require('../utils/mocks/statsMock');
 const TournamentsService = require('../services/tournaments');
 const MatchesService = require('../services/matches');
 const MongoLib = require('../lib/mongo');
@@ -57,10 +55,15 @@ class StatsService {
   }
 
   async getTeamStatsInTournament(teamId, tournamentId) {
-    const teamMatches = await matchesService.getTeamMatchesInTournament({ teamId, tournamentId }); 
+    const teamMatches = await matchesService.getTeamMatchesInTournament({ teamId, tournamentId });
 
     let streak = [];
     let playedMatches = 0;
+    let wonMatches = 0;
+    let lostMatches = 0;
+    let tiedMatches = 0;
+    let points = 0;
+    let gd = 0;
     let gf = 0;
     let gc = 0;
     let goalsAverage = 0;
@@ -71,15 +74,21 @@ class StatsService {
     teamMatches.map((match) => {
       if (match.state === 'played') {
         playedMatches += 1;
-        if (match.team_1_id == teamId) { // team = team_1
+        let team1id = match.team_1_id.toString();
+        let stringTeamId = teamId.toString();
+
+        if (team1id == stringTeamId) { // team = team_1
           gf += Number(Number(match.team_1_score));
           gc += Number(Number(match.team_2_score));
           if (Number(match.team_1_score) > Number(match.team_2_score)) {
             streak.push('w');
+            wonMatches += 1;
           } else if (Number(match.team_1_score) == Number(match.team_2_score)) {
             streak.push('d');
+            tiedMatches += 1;
           } else {
             streak.push('l');
+            lostMatches += 1;
           }
           if (Number(match.team_2_score) == 0) {
             totalCleanSheets++;
@@ -93,10 +102,13 @@ class StatsService {
           gc += Number(match.team_1_score);
           if (Number(match.team_2_score) > Number(match.team_1_score)) {
             streak.push('w');
+            wonMatches += 1;
           } else if (Number(match.team_1_score) == Number(match.team_2_score)) {
             streak.push('d');
+            tiedMatches += 1;
           } else {
             streak.push('l');
+            lostMatches += 1;
           }
           if (Number(match.team_1_score) == 0) {
             currentCleanSheets++;
@@ -108,18 +120,38 @@ class StatsService {
       }
       goalsAverage = Number((gf / playedMatches).toFixed(2));
       receivedGoalsAverage = Number((gc / playedMatches).toFixed(2));
+      gd = gf - gc;
+      points = (wonMatches * 3) + tiedMatches
     });
-    let stats = [
-      { streak: streak },
-      { playedMatches: playedMatches },
-      { gf: gf },
-      { gc: gc },
-      { goalsAverage: goalsAverage },
-      { totalCleanSheets: totalCleanSheets },
-      { currentCleanSheets: currentCleanSheets },
-      { receivedGoalsAverage: receivedGoalsAverage }
-    ]
+    let stats =
+    {
+      streak,
+      playedMatches,
+      wonMatches,
+      tiedMatches,
+      lostMatches,
+      points,
+      gd,
+      gf,
+      gc,
+      goalsAverage,
+      totalCleanSheets,
+      currentCleanSheets,
+      receivedGoalsAverage
+    }
     return stats;
+  }
+
+  async getTournamentPositionsWithStats(tournamentTeams, tournamentId) {
+    let resProm = await Promise.all(
+      await tournamentTeams.map(async (team) => {
+        let stats = await this.getTeamStatsInTournament(team.id, tournamentId);
+        team.stats = stats;
+        return team;
+      })
+    );
+    resProm.sort((teamA, teamB) => teamB.stats.points - teamA.stats.points || teamB.stats.gd - teamB.stats.gd || teamB.stats.gf - teamB.stats.gf || teamB.stats.gc - teamB.stats.gc);
+    return resProm;
   }
 
 }

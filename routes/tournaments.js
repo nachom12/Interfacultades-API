@@ -1,11 +1,13 @@
 const express = require('express');
 const TournamentsService = require('../services/tournaments.js');
+const StatsService = require('../services/stats.js');
 
 function tournaments(app) {
   const router = express.Router();
   app.use("/api/tournaments", router);
 
   const tournamentsService = new TournamentsService();
+  const statsService = new StatsService();
 
   router.get("/", async function (req, res, next) { // list all
     try {
@@ -32,11 +34,25 @@ function tournaments(app) {
     }
   })
 
+  router.get("/positions/:tournamentId", async function (req, res, next) {
+    const { tournamentId } = req.params;
+    try {
+      const tournamentTeams = await tournamentsService.getTeamsInTournament({ tournamentId });
+      const tournamentPositions = await statsService.getTournamentPositionsWithStats(tournamentTeams, tournamentId);
+      res.status(200).json({
+        data: tournamentPositions,
+        message: 'positions retrieved'
+      });
+    } catch (err) {
+      next(err);
+    }
+  })
+
   router.post("/", async function (req, res, next) { // create
     const { body: tournament } = req;
     try {
       let createdTournamentId;
-      if (tournament.type === 'League'){
+      if (tournament.type === 'League') {
         createdTournamentId = await tournamentsService.createTournamentLeague({ tournament });
       }
       else {
